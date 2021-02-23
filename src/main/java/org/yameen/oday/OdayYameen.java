@@ -19,13 +19,18 @@ public class OdayYameen {
        else {*/
           // String dirName=args[0];
           
-         String  dirName="D:\\output";
+         String  dirName="D:\\Program";
                 Service service=new Service();
                service.setAbsoluteFileDirectory(dirName);
-                service.dotheMainTask();
+        try {
+
+           service.displayDirectoryContents(dirName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
-          //  }
+        //  }
 
 
 
