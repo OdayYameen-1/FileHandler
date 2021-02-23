@@ -64,46 +64,34 @@ public class Service {
     ///////////////////////////////////////
     public void doCountOfASCII(String path) throws IOException {
         BufferedReader input=new BufferedReader(new FileReader(path));
-
+        int fackCount[]=new int[26];
         int value;
         while ((value = input.read()) != -1) {
             char c=(char)value;
 
                 if((c >='a') && (c<='z')) {
-                    incrementCount(c -'a' );
+                    fackCount[c -'a' ]++;
 
             }
             /// change ends.
         }
 
 
-
+        incrementCount(fackCount);
     }///////end doCountOfASCII
 
-    public synchronized void incrementCount(int index){
-        count[index]++;
+    public synchronized void incrementCount(int[] fackCount){
+        for(int i=0;i<26;i++){
+            count[i]=count[i]+fackCount[i];
+
+
+        }
+
+
     }
 
 
 
-    class Task implements Runnable{
-        String pt;
-
-        public Task(String pt) {
-            this.pt = pt;
-            System.out.println("Task #"+ Thread.currentThread().getId()+"  on file ==> "+pt);
-        }
-
-        @Override
-        public void run() {
-            try {
-                doCountOfASCII(pt);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
 
     }
 
