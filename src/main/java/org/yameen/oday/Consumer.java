@@ -1,48 +1,44 @@
 package org.yameen.oday;
 
-import java.sql.Time;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-public class Consumer extends Thread{
-    protected BlockingQueue<Runnable> sharedQueue;
-    ExecutorService pool= Executors.newFixedThreadPool(10);
-    private Runnable threadtoGet;
-    Consumer(BlockingQueue<Runnable> theQueue) {
-        super("Consumer");
-        this.sharedQueue = theQueue;
+public class Consumer extends Thread
+{
+
+
+    private Broker broker;
+
+
+    public Consumer( Broker broker)
+    {
+        this.broker = broker;
     }
 
-    public Runnable getThreadtoGet() {
-        return threadtoGet;
-    }
-
-    public void setThreadtoGet(Runnable threadtoGet) {
-        this.threadtoGet = threadtoGet;
-    }
 
     @Override
-    public void run() {
+    public void run()
+    {
         try
         {
-            while (true)
+            Thread data = broker.get();
+
+            while (broker.continueProducing || data != null)
             {
-                Runnable objThread = sharedQueue.take();
-                System.out.println("Consumed resource - Queue size now = "  + sharedQueue.size());
                 Thread.sleep(100);
-                pool.submit(objThread);
+                System.out.println("Consumer   processed data from broker: "+data.getId() );
+
+                data = broker.get();
+                data.start();
 
             }
 
-                pool.shutdown();
-            pool.awaitTermination(20, TimeUnit.MINUTES);
+
+            System.out.println("Comsumer  finished its job; terminating.");
         }
         catch (InterruptedException ex)
         {
-            System.out.println("CONSUMER INTERRUPTED");
+            ex.printStackTrace();
         }
-
     }
+
 }

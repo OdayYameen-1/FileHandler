@@ -9,7 +9,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Service {
      public int[] count = new int[26];
     private   String AbsoluteFileDirectory;
-    public BlockingQueue<Runnable> myqueue=new ArrayBlockingQueue<Runnable>(10);
+    Broker broker=new Broker();
+    Future ProdStatus=null;
+    ExecutorService pool= Executors.newFixedThreadPool(10);
     public String getAbsoluteFileDirectory() {
         return AbsoluteFileDirectory;
     }
@@ -22,43 +24,64 @@ public class Service {
 
 
 
+        pool.execute(new Consumer(broker));
+
 
         Files.walk(Paths.get(pt))
                 .filter(path -> path.toString().endsWith(".txt"))
                 .forEach(path -> {
+                     ProdStatus=pool.submit(new Runnable() {
+    @Override
+    public void run() {
+        try {
+            System.out.println("Producer produced: " + path.toString());
+            Thread.sleep(100);
+            broker.put(new Thread(){
 
+                @Override
+                public void run(){
+
+                    System.out.println("Task #"+ Thread.currentThread().getId()+"  on file ==> "+path.toString());
                     try {
-                        myqueue.put(new Runnable(){
-
-                            @Override
-                            public void run(){
-
-                                System.out.println("Task #"+ Thread.currentThread().getId()+"  on file ==> "+path.toString());
-                                try {
-                                    doCountOfASCII(path.toString());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-
-
-
-                        });
-                    } catch (InterruptedException e) {
+                        doCountOfASCII(path.toString());
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
 
 
-                    System.err.println(myqueue.size());
-
-                });
+                }
 
 
 
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+});
 
 
+
+
+                });///////////end for each
+        this.broker.continueProducing = Boolean.FALSE;
+
+        System.out.println("Producer finished its job; terminating.");
+        try {
+            ProdStatus.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        pool.shutdown();
+        try {
+
+            pool.awaitTermination(20,TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         for (int i = 0; i < 26; i++) {
             System.out.print((char) (i + 'a'));
@@ -67,6 +90,9 @@ public class Service {
 
 
     }
+
+
+
 
     ///////////////////////////////////////
     ///////////////////////////////////////
