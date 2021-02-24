@@ -2,17 +2,14 @@ package org.yameen.oday;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Service {
      public int[] count = new int[26];
     private   String AbsoluteFileDirectory;
-
+    public BlockingQueue<Runnable> myqueue=new ArrayBlockingQueue<Runnable>(10);
     public String getAbsoluteFileDirectory() {
         return AbsoluteFileDirectory;
     }
@@ -22,36 +19,47 @@ public class Service {
     }
 
     public  void displayDirectoryContents(String pt) throws IOException {
-        ExecutorService pool= Executors.newFixedThreadPool(10);
+
+
+
+
         Files.walk(Paths.get(pt))
                 .filter(path -> path.toString().endsWith(".txt"))
                 .forEach(path -> {
 
-                    pool.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("Task #"+ Thread.currentThread().getId()+"  on file ==> "+path.toString());
-                            try {
-                                doCountOfASCII(path.toString());
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                    try {
+                        myqueue.put(new Runnable(){
+
+                            @Override
+                            public void run(){
+
+                                System.out.println("Task #"+ Thread.currentThread().getId()+"  on file ==> "+path.toString());
+                                try {
+                                    doCountOfASCII(path.toString());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
                             }
-                        }
-                    });
 
 
 
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
 
-
+                    System.err.println(myqueue.size());
 
                 });
-        pool.shutdown();
-        try {
-            pool.awaitTermination(20, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
+
+
+
+
         for (int i = 0; i < 26; i++) {
             System.out.print((char) (i + 'a'));
             System.out.println(": " + count[i]);
