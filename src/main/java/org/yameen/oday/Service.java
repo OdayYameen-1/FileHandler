@@ -34,7 +34,7 @@ public class Service {
 
         try {
             System.out.println("Producer produced: " + path.toString());
-            Thread.sleep(100);
+
             broker.put(new Runnable(){
 
                 @Override
@@ -64,7 +64,15 @@ public class Service {
 
                 });///////////end for each
         this.broker.continueProducing = Boolean.FALSE;
-
+        try {
+            consumer.prodstatus.get();
+            consumer.pool.shutdown();
+            consumer.pool.awaitTermination(20, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         System.out.println("Producer finished its job; terminating.");
 
         for (int i = 0; i < 26; i++) {
@@ -72,7 +80,7 @@ public class Service {
             System.out.println(": " + count[i]);
         }
 
-
+System.exit(0);
     }
 
 

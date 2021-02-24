@@ -4,10 +4,10 @@ import java.util.concurrent.*;
 
 public class Consumer extends Thread
 {
-    ExecutorService pool= Executors.newFixedThreadPool(10);
+    ExecutorService pool= Executors.newFixedThreadPool(5);
 
     private Broker broker;
-    private Future prodStatus;
+    Future prodstatus=null;
 
 
     public Consumer( Broker broker)
@@ -23,18 +23,16 @@ public class Consumer extends Thread
         {
 
 
-            while (broker.continueProducing )
-            { Runnable data = broker.get();
-                Thread.sleep(100);
+            while (broker.continueProducing ||broker.queue.size()>0)
+            {
+                Runnable data = broker.get();
                 System.out.println("Consumer   processed data from broker: "+data.toString() );
 
 
-               prodStatus= pool.submit(data);
+           prodstatus= pool.submit(data);
 
             }
 
-            pool.shutdown();
-           pool.awaitTermination(20,TimeUnit.MINUTES);
             System.out.println("Comsumer  finished its job; terminating.");
         }
         catch (InterruptedException ex)

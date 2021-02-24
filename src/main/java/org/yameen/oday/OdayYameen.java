@@ -13,13 +13,13 @@ public class OdayYameen {
 
 
     public static void main(String[] args) {
-
+        Long t1=System.nanoTime();
            /* if(args.length!=1)
                 System.err.println("You must enter the dir name only");
        else {*/
           // String dirName=args[0];
           
-         String  dirName="G:\\Homworks";
+         String  dirName="C:\\Users\\OdayY\\Desktop\\out";
                 Service service=new Service();
                service.setAbsoluteFileDirectory(dirName);
 
@@ -34,7 +34,7 @@ public class OdayYameen {
 
         //  }
 
-
+        System.err.println((System.nanoTime()-t1)/1000000000.0);
 
 
     }
