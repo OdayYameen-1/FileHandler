@@ -4,16 +4,16 @@ import java.util.concurrent.TimeUnit;
 
 public class Broker
 {
-    public ArrayBlockingQueue<Thread> queue = new ArrayBlockingQueue<Thread>(10);
+    public ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(10);
     public Boolean continueProducing = Boolean.TRUE;
 
-    public void put(Thread data) throws InterruptedException
+    public void put(Runnable data) throws InterruptedException
     {
         this.queue.put(data);
-        System.err.println("The Thread id ==>  "+data.getId());
+        System.err.println("The Thread id ==>  "+data.toString());
     }
 
-    public Thread get() throws InterruptedException
+    public Runnable get() throws InterruptedException
     {
         return this.queue.take();
     }

@@ -22,6 +22,7 @@ public class OdayYameen {
          String  dirName="G:\\Homworks";
                 Service service=new Service();
                service.setAbsoluteFileDirectory(dirName);
+
         try {
 
            service.displayDirectoryContents(dirName);

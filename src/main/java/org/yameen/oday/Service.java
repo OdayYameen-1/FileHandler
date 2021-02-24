@@ -10,8 +10,8 @@ public class Service {
      public int[] count = new int[26];
     private   String AbsoluteFileDirectory;
     Broker broker=new Broker();
-    Future ProdStatus=null;
-    ExecutorService pool= Executors.newFixedThreadPool(10);
+    Consumer consumer=new Consumer(broker);
+
     public String getAbsoluteFileDirectory() {
         return AbsoluteFileDirectory;
     }
@@ -24,19 +24,18 @@ public class Service {
 
 
 
-        pool.execute(new Consumer(broker));
+        consumer.start();
 
 
         Files.walk(Paths.get(pt))
                 .filter(path -> path.toString().endsWith(".txt"))
                 .forEach(path -> {
-                     ProdStatus=pool.submit(new Runnable() {
-    @Override
-    public void run() {
+
+
         try {
             System.out.println("Producer produced: " + path.toString());
             Thread.sleep(100);
-            broker.put(new Thread(){
+            broker.put(new Runnable(){
 
                 @Override
                 public void run(){
@@ -58,8 +57,7 @@ public class Service {
             e.printStackTrace();
         }
 
-    }
-});
+
 
 
 
@@ -68,20 +66,6 @@ public class Service {
         this.broker.continueProducing = Boolean.FALSE;
 
         System.out.println("Producer finished its job; terminating.");
-        try {
-            ProdStatus.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        pool.shutdown();
-        try {
-
-            pool.awaitTermination(20,TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         for (int i = 0; i < 26; i++) {
             System.out.print((char) (i + 'a'));
