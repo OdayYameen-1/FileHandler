@@ -10,17 +10,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class OdayYameen {
+  public static Service service=new Service();
 
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Long t1=System.nanoTime();
-           /* if(args.length!=1)
-                System.err.println("You must enter the dir name only");
-       else {*/
-          // String dirName=args[0];
+            if(args.length!=1)
+                throw new Exception("the arguments must be length of one");
+       else {
+          String dirName=args[0];
           
-         String  dirName="C:\\Users\\OdayY\\Desktop\\out3\\";
-                Service service=new Service();
+        // String  dirName="C:\\Users\\OdayY\\Desktop\\out3\\";
+
                service.setAbsoluteFileDirectory(dirName);
 
         try {
@@ -32,7 +32,7 @@ public class OdayYameen {
         }
 
 
-        //  }
+          }
 
         System.err.println(((System.nanoTime()-t1)/1000000000.0)/60);
 

@@ -68,6 +68,7 @@ public class Service {
         System.out.println("Producer finished its job; terminating.");
 
         try {
+            Thread.sleep(500);
             consumer.prodstatus.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
