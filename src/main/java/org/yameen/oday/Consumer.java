@@ -4,7 +4,7 @@ import java.util.concurrent.*;
 
 public class Consumer extends Thread
 {
-    ExecutorService pool= Executors.newFixedThreadPool(10);
+    ExecutorService pool= Executors.newFixedThreadPool(5);
 
     private Broker broker;
     Future prodstatus=null;
@@ -23,7 +23,7 @@ public class Consumer extends Thread
         {
 
 
-            while ((broker.continueProducing ||broker.queue.size()>0))
+            while ((broker.continueProducing ||broker.queue.size()>=0))
             {
                 data=broker.queue.take();
                 if(data!=null) {

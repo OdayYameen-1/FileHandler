@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Broker
 {
-    public BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(10000);
+    public BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(1500);
     public Boolean continueProducing = Boolean.TRUE;
 
     public void put(Runnable data) throws InterruptedException

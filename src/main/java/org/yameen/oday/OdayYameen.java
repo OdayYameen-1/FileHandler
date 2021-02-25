@@ -19,7 +19,7 @@ public class OdayYameen {
        else {*/
           // String dirName=args[0];
           
-         String  dirName="C:\\Users\\OdayY\\Desktop\\out";
+         String  dirName="C:\\Users\\OdayY\\Desktop\\out3\\";
                 Service service=new Service();
                service.setAbsoluteFileDirectory(dirName);
 
@@ -34,9 +34,9 @@ public class OdayYameen {
 
         //  }
 
-        System.err.println((System.nanoTime()-t1)/1000000000.0);
+        System.err.println(((System.nanoTime()-t1)/1000000000.0)/60);
 
-       // System.exit(0);
+        System.exit(0);
     }
 
 

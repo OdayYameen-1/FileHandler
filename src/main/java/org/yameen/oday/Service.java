@@ -74,7 +74,7 @@ public class Service {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        if(broker.queue.size()<=0)
+        if(broker.queue.size()<=0&&this.broker.continueProducing==false)
             consumer.pool.shutdown();
 
 
