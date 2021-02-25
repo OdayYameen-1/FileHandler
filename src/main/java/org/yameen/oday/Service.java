@@ -35,14 +35,14 @@ public class Service {
         try {
             System.out.println("Producer produced: " + path.toString());
 
-            broker.put(new Runnable(){
+            broker.queue.put(new Runnable(){
 
                 @Override
                 public void run(){
 
                     System.out.println("Task #"+ Thread.currentThread().getId()+"  on file ==> "+path.toString());
                     try {
-                        doCountOfASCII(path.toString());
+                       doCountOfASCII(path.toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -63,24 +63,36 @@ public class Service {
 
 
                 });///////////end for each
+
         this.broker.continueProducing = Boolean.FALSE;
+        System.out.println("Producer finished its job; terminating.");
+
         try {
             consumer.prodstatus.get();
-            consumer.pool.shutdown();
-            consumer.pool.awaitTermination(20, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println("Producer finished its job; terminating.");
+        if(broker.queue.size()<=0)
+            consumer.pool.shutdown();
+
+
+        try {
+            consumer.pool.awaitTermination(500,TimeUnit.MILLISECONDS);
+            consumer.pool.shutdownNow();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
 
         for (int i = 0; i < 26; i++) {
             System.out.print((char) (i + 'a'));
             System.out.println(": " + count[i]);
         }
 
-System.exit(0);
+
     }
 
 
