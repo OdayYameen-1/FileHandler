@@ -19,7 +19,7 @@ public class OdayYameen {
        else {
           String dirName=args[0];
           
-        // String  dirName="C:\\Users\\OdayY\\Desktop\\out3\\";
+        // String  dirName="C:\\";
 
                service.setAbsoluteFileDirectory(dirName);
 
